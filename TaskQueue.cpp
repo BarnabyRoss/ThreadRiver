@@ -16,7 +16,7 @@ void TaskQueue::push(Task task){
 	std::unique_lock lock(mtx_);
 	cv_.wait(lock, [this](){ return queue_.size() < max_size_; });
 	
-	queue_.push(task);
+	queue_.push(std::move(task));
 	cv_.notify_one();
 }
 
