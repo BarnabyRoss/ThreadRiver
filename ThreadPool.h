@@ -17,6 +17,6 @@ public:
 	ThreadPool(size_t threads);
   ~ThreadPool();
 	
-	
+	void submit(std::function<void()> task);
 };
 

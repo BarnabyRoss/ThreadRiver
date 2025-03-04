@@ -5,7 +5,7 @@
 ThreadPool::ThreadPool(size_t threads) : taskQueue_(2000){
 	
 	for(int i = 0; i < threads; ++i)
-		workers.emplace_back(ThreadPool::work, this);
+		workers.emplace_back(&ThreadPool::work, this);
 }
 
 ThreadPool::~ThreadPool(){
@@ -21,4 +21,9 @@ void ThreadPool::work(){
 		task();
 	}
 
+}
+
+void ThreadPool::submit(std::function<void()> task){
+	
+	taskQueue_.push(std::move(task));
 }
