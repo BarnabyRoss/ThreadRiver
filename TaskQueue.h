@@ -17,14 +17,16 @@ private:
 	std::mutex mtx_;
 	std::condition_variable cv_;
 	const size_t max_size_;
+	bool stop_;
 	
 public:
-	TaskQueue(size_t size);
+	TaskQueue(size_t size, bool stop = false);
 	~TaskQueue();
 	
 	void push(Task task);
 	Task pop();
 	bool empty();
+	void notifyAll();
 
 };
 
