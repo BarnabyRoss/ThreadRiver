@@ -5,6 +5,7 @@
 #include <memory>
 #include <atomic>
 #include <vector>
+#include <future>
 #include "TaskQueue.h"
 
 class ThreadPool{
@@ -20,7 +21,8 @@ public:
 	ThreadPool(size_t threads);
   ~ThreadPool();
 	
-	void submit(std::function<void()> task);
+	template< typename F, typename... Args >
+	auto submit(F&& func, Args... args) -> std::future<std::invoke_result_t<F, Args...>>;
 	//void stop();
 	void shutdown();
 };
