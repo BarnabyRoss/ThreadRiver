@@ -28,7 +28,7 @@ void ThreadPool::work(){
 }
 
 template< typename F, typename... Args >
-auto ThreadPool::submit(F&& func, Args... args) -> std::future<std::invoke_result_t<F, Args...>>{
+auto ThreadPool::submit(F&& func, Args&&... args) -> std::future<std::invoke_result_t<F, Args...>>{
 	
 	using ReturnType = std::invoke_result_t<F, Args...>;
 	auto prom = std::make_shared<std::promise<ReturnType>>();
