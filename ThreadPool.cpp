@@ -18,11 +18,11 @@ void ThreadPool::work(){
 
 	while( !stop_ ){
 		
-		/*auto task = taskQueue_.pop();
+		auto task = taskQueue_.pop();
 		task();
 		if( stop_ ) break;
-		*/
-		taskQueue_.pop()();
+		
+		//taskQueue_.pop()();
 	}
 
 }
