@@ -14,11 +14,13 @@ private:
 	TaskQueue taskQueue_;
 	std::vector<std::thread> workers;
 	std::atomic<bool> stop_;
+	const size_t max_threads_;
+	std::mutex mtx_;
 	
 	void work();
 
 public:
-	ThreadPool(size_t threads);
+	ThreadPool(size_t threads = std::thread::hardware_concurrency());
   ~ThreadPool();
 	
 	template< typename F, typename... Args >
@@ -42,5 +44,11 @@ public:
 	}
 	//void stop();
 	void shutdown();
+
+	void resize(size_t newSize);
+
+	size_t getMaxThreads() const { return max_threads_; }
+	size_t getThreadCount() const { return workers.size(); }
+
 };
 
