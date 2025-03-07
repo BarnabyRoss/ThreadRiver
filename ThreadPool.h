@@ -42,7 +42,7 @@ public:
 
 		return fut;
 	}
-	//void stop();
+	
 	void shutdown();
 
 	void resize(size_t newSize);

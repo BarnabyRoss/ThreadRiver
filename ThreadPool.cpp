@@ -30,13 +30,6 @@ void ThreadPool::work(){
 
 }
 
-/*void ThreadPool::stop(){
-
-	stop_ = true;
-	taskQueue_.notifyAll();
-}
-*/
-
 void ThreadPool::shutdown(){
 
 	stop_ = true;
@@ -62,5 +55,13 @@ void ThreadPool::resize(size_t newSize){
 		int num = getThreadCount() - newSize;
 		taskQueue_.setCounter(num);
 		taskQueue_.notifyAll();
+
+		//清理退出线程
+		for(auto& worker : workers){
+			if( worker.joinable() ){
+				worker.join();
+			}
+		}
+		workers.erase(std::remove_if(workers.begin(), workers.end(), [](const std::thread& t){ return !t.joinable();}) ,workers.end());
 	}
 }
