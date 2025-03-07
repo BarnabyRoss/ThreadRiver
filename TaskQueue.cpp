@@ -20,10 +20,16 @@ void TaskQueue::push(Task task){
 	cv_.notify_one();
 }
 
-TaskQueue::Task TaskQueue::pop(){
+std::optional<TaskQueue::Task> TaskQueue::pop(){
 	
 	std::unique_lock lock(mtx_);
-	cv_.wait(lock, [this](){ return !queue_.empty() || stop_; });
+	cv_.wait(lock, [this](){ return !queue_.empty() || stop_ || exitNumber_ > 0; });
+
+	if( exitNumber_ > 0){
+
+		--exitNumber_;
+		return std::nullopt;
+	}
 
 	if( queue_.empty() && stop_ )
 		return [](){};

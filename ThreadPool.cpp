@@ -20,7 +20,9 @@ void ThreadPool::work(){
 	while( !stop_ ){
 		
 		auto task = taskQueue_.pop();
-		task();
+		if( task.has_value() ){
+			task.value()();
+		}
 		if( stop_ ) break;
 		
 		//taskQueue_.pop()();
@@ -59,5 +61,10 @@ void ThreadPool::resize(size_t newSize){
 		for(size_t i = 0; i < num; ++i){
 			workers.emplace_back(&ThreadPool::work, this);
 		}
+	}else if( newSize < getThreadCount() ){
+
+		int num = getThreadCount() - newSize;
+		taskQueue_.setCounter(num);
+		taskQueue_.notifyAll();
 	}
 }
