@@ -48,12 +48,8 @@ void ThreadPool::shutdown(){
 
 void ThreadPool::resize(size_t newSize){
 
-	{
-		std::lock_guard lock(mtx_);
-		if( stop_ ) return;
-	}
-
-	if( newSize > getMaxThreads() ) return;
+	std::lock_guard lock(mtx_);
+	if( stop_ || newSize > getMaxThreads() ) return;
 
 	if( newSize > getThreadCount() ){
 
