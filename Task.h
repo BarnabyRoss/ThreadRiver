@@ -22,6 +22,7 @@ protected:
   std::uint8_t priority_;
   std::atomic<std::uint64_t> id_{0};
   TimePoint nextExecuteTime_;
+  ErrorHandler errorHandler_;
 
 public:
   Task(TaskFunction func, std::uint64_t id, std::uint8_t priority) : func_(std::move(func)), id_(id), priority_(priority){
@@ -39,7 +40,7 @@ public:
                                                 
   virtual ~Task() = default;
 
-  virtual void execute() { if( func_ ){ func_();}}
+  virtual void execute();
   virtual std::uint64_t getId(){ return id_; }
   virtual void setId(std::uint64_t id){ id_.store(id); }
   virtual std::uint8_t getPriority() const { return priority_; }
@@ -47,6 +48,8 @@ public:
   TimePoint getNextExecuteTime() const { return nextExecuteTime_; }
 
   bool isReadyToExecute() const;
+
+  ErrorHandler& getErrorHandler(){ return errorHandler_; }
 
 };
 
