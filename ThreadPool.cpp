@@ -22,9 +22,18 @@ void ThreadPool::work(){
 		
 		auto task = scheduler_.pop();
 		if( task.has_value() ){
-		
-			task.value()->execute();
-			++completed_tasks_;
+			try{
+
+				task.value()->execute();
+				++completed_tasks_;
+
+			}catch(const std::exception& e){
+
+				errorHandler_.setError(ErrorType::THREAD_ERROR, std::string("work thread error!") + e.what());
+				std::cerr << "Task Execute Failed : " << task.value()->getErrorHandler().getErrorMessage() << std::endl;
+
+			}
+			
 			
 		}
 		if( stop_ ) break;
