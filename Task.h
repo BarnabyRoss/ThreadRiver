@@ -23,7 +23,9 @@ protected:
   TimePoint nextExecuteTime_;
 
 public:
-  Task(TaskFunction func, std::uint64_t id, std::uint8_t priority) : func_(std::move(func)), id_(id), priority_(priority){}
+  Task(TaskFunction func, std::uint64_t id, std::uint8_t priority) : func_(std::move(func)), id_(id), priority_(priority){
+    nextExecuteTime_ = std::chrono::system_clock::now();
+  }
   Task(TaskFunction func, std::uint64_t id, std::uint8_t priority, TimePoint executeTime) : 
                                                 func_(std::move(func)), id_(id), priority_(priority), nextExecuteTime_(executeTime){}
 
