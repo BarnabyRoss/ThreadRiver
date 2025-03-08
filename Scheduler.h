@@ -15,6 +15,10 @@ struct TaskCompare{
 
 	bool operator() (const std::shared_ptr<Task>& lhs, const std::shared_ptr<Task>& rhs) const{
 
+		auto lhsTime = lhs->getNextExecuteTime();
+		auto rhsTime = rhs->getNextExecuteTime();
+		if( lhsTime != rhsTime ) return lhsTime > rhsTime;
+
 		if( lhs->getPriority() != rhs->getPriority() ) return lhs->getPriority() > rhs->getPriority();
 		return lhs->getId() > rhs->getId();
 	}

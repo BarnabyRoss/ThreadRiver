@@ -33,12 +33,17 @@ std::optional<std::shared_ptr<Task>> Scheduler::pop(){
 
 	if( tasks_.empty() && stop_ )
 		return std::nullopt;
-	
-	std::shared_ptr<Task> ptr = tasks_.top();
 
-	tasks_.pop();
+	auto nowTime = std::chrono::system_clock::now();
+	if( !tasks_.empty() && !stop_ && tasks_.top()->getNextExecuteTime() < nowTime){
+
+		std::shared_ptr<Task> ptr = tasks_.top();
+		tasks_.pop();
+
+		return std::move(ptr);
+	}
 	
-	return std::move(ptr);
+	return std::nullopt;
 }
 
 bool Scheduler::empty(){
