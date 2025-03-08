@@ -42,7 +42,7 @@ public:
 			}
 		};
 
-		std::shared_ptr<Task> ptr = std::make_shared<Task>(std::move(task), ThreadPool::id_counter_++, Task::PRIORITY_NORMAL);
+		std::shared_ptr<Task> ptr = std::make_shared<Task>(std::move(task), ThreadPool::id_counter_++, priority);
 		scheduler_.push(std::move(ptr));
 
 		return fut;
