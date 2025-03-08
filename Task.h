@@ -5,6 +5,7 @@
 #include <iostream>
 #include <ctime>
 #include <atomic>
+#include "ErrorHandler.h"
 
 class Task{
 

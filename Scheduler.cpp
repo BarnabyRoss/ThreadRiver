@@ -35,7 +35,7 @@ std::optional<std::shared_ptr<Task>> Scheduler::pop(){
 		return std::nullopt;
 
 	auto nowTime = std::chrono::system_clock::now();
-	if( !tasks_.empty() && !stop_ && tasks_.top()->getNextExecuteTime() < nowTime){
+	if( !tasks_.empty() && !stop_ && tasks_.top()->getNextExecuteTime() <= nowTime){
 
 		std::shared_ptr<Task> ptr = tasks_.top();
 		tasks_.pop();
