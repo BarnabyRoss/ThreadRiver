@@ -1,6 +1,7 @@
 
 #include "ThreadPool.h"
 
+std::atomic<std::uint64_t> ThreadPool::id_counter_ = 0;
 
 ThreadPool::ThreadPool(size_t threads) : scheduler_(2000), stop_(false), 
 																			max_threads_(std::max(2u, std::thread::hardware_concurrency() * 2)){

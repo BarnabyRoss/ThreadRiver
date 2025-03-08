@@ -1,4 +1,7 @@
 
+#ifndef __SCHEDULER_H__
+#define __SCHEDULER_H__
+
 #include <thread>
 #include <condition_variable>
 #include <queue>
@@ -12,7 +15,8 @@ struct TaskCompare{
 
 	bool operator() (const std::shared_ptr<Task>& lhs, const std::shared_ptr<Task>& rhs) const{
 
-		return true;
+		if( lhs->getPriority() != rhs->getPriority() ) return lhs->getPriority() > rhs->getPriority();
+		return lhs->getId() > rhs->getId();
 	}
 
 };
@@ -42,3 +46,5 @@ public:
 
 };
 
+
+#endif

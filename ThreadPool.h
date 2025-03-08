@@ -1,17 +1,16 @@
 
-#include <iostream>
+#ifndef __THREADPOOL_H__
+#define __THREADPOOL_H__
+
 #include <thread>
-#include <condition_variable>
-#include <memory>
-#include <atomic>
 #include <vector>
 #include <future>
-#include "TaskQueue.h"
+#include "Scheduler.h"
 
 class ThreadPool{
 
 private:
-	TaskQueue taskQueue_;
+	Scheduler scheduler_;
 	std::vector<std::thread> workers;
 	std::atomic<bool> stop_;
 	const size_t max_threads_;
@@ -20,11 +19,16 @@ private:
 	void work();
 
 public:
+	static std::atomic<std::uint64_t> id_counter_;
+
+public:
 	ThreadPool(size_t threads = std::thread::hardware_concurrency());
   ~ThreadPool();
 	
 	template< typename F, typename... Args >
-	auto submit(F&& func, Args&&... args) -> std::future<std::invoke_result_t<F, Args...>>{
+	auto submit(F&& func, uint8_t priority, Args&&... args) -> std::future<std::invoke_result_t<F, Args...>>{
+
+		if( priority < Task::PRIORITY_LOW || priority > Task::PRIORITY_HIGH ) priority = Task::PRIORITY_NORMAL;
 
 		using ReturnType = std::invoke_result_t<F, Args...>;
 		auto prom = std::make_shared<std::promise<ReturnType>>();
@@ -38,7 +42,8 @@ public:
 			}
 		};
 
-		taskQueue_.push(std::move(task));
+		std::shared_ptr<Task> ptr = std::make_shared<Task>(std::move(task), ThreadPool::id_counter_++, Task::PRIORITY_NORMAL);
+		scheduler_.push(std::move(ptr));
 
 		return fut;
 	}
@@ -52,3 +57,4 @@ public:
 
 };
 
+#endif
