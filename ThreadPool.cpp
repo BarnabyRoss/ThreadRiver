@@ -23,10 +23,11 @@ void ThreadPool::work(){
 		auto task = scheduler_.pop();
 		if( task.has_value() ){
 			task.value()->execute();
+
+			++completed_tasks_;
 		}
 		if( stop_ ) break;
 		
-		//taskQueue_.pop()();
 	}
 
 }

@@ -44,6 +44,12 @@ public:
 	void notifyAll();
 	void setCounter(int num){ exitNumber_.store(num); }
 
+	size_t getTaskQueueSize(){ 
+
+		std::lock_guard lock(mtx_);
+		return tasks_.size(); 
+	}  
+
 };
 
 
