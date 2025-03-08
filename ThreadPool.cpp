@@ -2,7 +2,7 @@
 #include "ThreadPool.h"
 
 
-ThreadPool::ThreadPool(size_t threads) : taskQueue_(2000), stop_(false), 
+ThreadPool::ThreadPool(size_t threads) : scheduler_(2000), stop_(false), 
 																			max_threads_(std::max(2u, std::thread::hardware_concurrency() * 2)){
 	
 	for(int i = 0; i < threads; ++i)
@@ -19,9 +19,9 @@ void ThreadPool::work(){
 
 	while( !stop_ ){
 		
-		auto task = taskQueue_.pop();
+		auto task = scheduler_.pop();
 		if( task.has_value() ){
-			task.value()();
+			task.value()->execute();
 		}
 		if( stop_ ) break;
 		
@@ -33,7 +33,7 @@ void ThreadPool::work(){
 void ThreadPool::shutdown(){
 
 	stop_ = true;
-	taskQueue_.notifyAll();
+	scheduler_.notifyAll();
 	for(auto& worker : workers)
 		if( worker.joinable() )
 			worker.join();
@@ -53,8 +53,8 @@ void ThreadPool::resize(size_t newSize){
 	}else if( newSize < getThreadCount() ){
 
 		int num = getThreadCount() - newSize;
-		taskQueue_.setCounter(num);
-		taskQueue_.notifyAll();
+		scheduler_.setCounter(num);
+		scheduler_.notifyAll();
 
 		//清理退出线程
 		for(auto& worker : workers){
