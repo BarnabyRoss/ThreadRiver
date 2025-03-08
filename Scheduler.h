@@ -37,6 +37,7 @@ private:
 	const size_t max_size_;
 	bool stop_;
 	std::atomic<int> exitNumber_{0};
+	ErrorHandler errorHandler_;
 	
 public:
 	Scheduler(size_t size, bool stop = false);
@@ -53,6 +54,8 @@ public:
 		std::lock_guard lock(mtx_);
 		return tasks_.size(); 
 	}  
+
+	ErrorHandler& getErrorHandler(){ return errorHandler_; }
 
 };
 
