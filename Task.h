@@ -26,6 +26,14 @@ public:
   Task(TaskFunction func, std::uint64_t id, std::uint8_t priority) : func_(std::move(func)), id_(id), priority_(priority){}
   Task(TaskFunction func, std::uint64_t id, std::uint8_t priority, TimePoint executeTime) : 
                                                 func_(std::move(func)), id_(id), priority_(priority), nextExecuteTime_(executeTime){}
+
+   template< typename Duration >
+   Task(TaskFunction func, std::uint64_t id, std::uint8_t priority, Duration delay) : func_(std::move(func)), id_(id), priority_(priority) {
+
+    auto nowTime = std::chrono::system_clock::now();
+    nextExecuteTime_ = nowTime + delay;
+   }
+                                                
   virtual ~Task() = default;
 
   virtual void execute() { if( func_ ){ func_();}}
