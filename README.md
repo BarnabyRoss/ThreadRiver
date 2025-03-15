@@ -49,7 +49,7 @@ int main() {
 优先级任务
 
 提交高优先级任务
-auto highPriorityFuture = pool.submit([](){ std::cout << "High priority task"; }, Task::PRIORITY_HIGH);
+auto highPriorityFuture = pool.submit([]() { std::cout << "High priority task"; }, Task::PRIORITY_HIGH);
 
 提交普通优先级任务
 auto normalPriorityFuture = pool.submit([](){ std::cout << "Normal priority task"; }, Task::PRIORITY_NORMAL);
