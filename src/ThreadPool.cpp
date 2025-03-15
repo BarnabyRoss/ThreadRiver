@@ -6,7 +6,7 @@ std::atomic<std::uint64_t> ThreadPool::id_counter_ = 0;
 ThreadPool::ThreadPool(size_t threads) : scheduler_(2000), stop_(false), 
 																			max_threads_(std::max(2u, std::thread::hardware_concurrency() * 2)){
 	
-	for(int i = 0; i < threads; ++i)
+	for(size_t i = 0; i < threads; ++i)
 		workers.emplace_back(&ThreadPool::work, this);
 }
 

@@ -18,11 +18,11 @@ public:
   static const int PRIORITY_LOW = 3;
 
 protected:
-  TaskFunction func_;
-  std::uint8_t priority_;
-  std::atomic<std::uint64_t> id_{0};
-  TimePoint nextExecuteTime_;
-  ErrorHandler errorHandler_;
+  TaskFunction func_;  //任务函数
+  std::atomic<std::uint64_t> id_{0}; //任务ID
+  std::uint8_t priority_; //任务优先级
+  TimePoint nextExecuteTime_; //下次执行时间
+  ErrorHandler errorHandler_; //错误处理
 
 public:
   Task(TaskFunction func, std::uint64_t id, std::uint8_t priority) : func_(std::move(func)), id_(id), priority_(priority){

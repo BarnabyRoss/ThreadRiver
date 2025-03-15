@@ -31,12 +31,12 @@ public:
 	using TaskQueue = std::priority_queue<std::shared_ptr<Task>, std::vector<std::shared_ptr<Task>>, TaskCompare>;
 	
 private:
-	TaskQueue tasks_;
-	std::mutex mtx_;
-	std::condition_variable cv_;
-	const size_t max_size_;
-	bool stop_;
-	std::atomic<int> exitNumber_{0};
+	TaskQueue tasks_;	//任务队列
+	std::mutex mtx_; //互斥锁
+	std::condition_variable cv_; //条件变量
+	const size_t max_size_; //最大任务队列大小
+	bool stop_; //停止标志
+	std::atomic<int> exitNumber_{0}; //退出标志
 	ErrorHandler errorHandler_;
 	
 public:

@@ -46,15 +46,70 @@ public:
 			auto prom = std::make_shared<std::promise<ReturnType>>();
 			auto fut = prom->get_future();
 
-			auto task = [prom, func = std::forward<F>(func), ...args = std::forward<Args>(args)](){
+			auto task = [prom, func = std::forward<F>(func), ...args = std::forward<Args>(args)]() mutable{
 				try{
-					prom->set_value(func(args...));
+
+					if constexpr (std::is_void_v<ReturnType>) {
+						// void 返回类型的处理
+						//func(args...);
+						std::invoke(func, args...);
+						prom->set_value();
+
+					}else{
+
+						//prom->set_value(func(args...));
+						prom->set_value(std::invoke(func, args...));
+					}
+					
 				}catch(...){
-					prom->set_execption(std::current_exception());
+					prom->set_exception(std::current_exception());
 				}
 			};
 
 			std::shared_ptr<Task> ptr = std::make_shared<Task>(std::move(task), ThreadPool::id_counter_++, priority);
+			scheduler_.push(std::move(ptr));
+
+			return fut;
+
+		}catch(const std::exception& e){
+
+			errorHandler_.setError(ErrorType::THREAD_ERROR, std::string("Thread Pool Submit Failed : ") + e.what());
+			throw;
+		}
+	}
+
+	template <typename F, typename... Args>
+	auto submit(F&& func, uint8_t priority, std::chrono::system_clock::duration delay, Args... args){
+
+		try{
+
+			if( priority < Task::PRIORITY_LOW || priority > Task::PRIORITY_HIGH ) priority = Task::PRIORITY_NORMAL;
+
+			using ReturnType = std::invoke_result_t<F, Args...>;
+			auto prom = std::make_shared<std::promise<ReturnType>>();
+			auto fut = prom->get_future();
+
+			auto task = [prom, func = std::forward<F>(func), ...args = std::forward<Args>(args)]() mutable{
+				try{
+
+					if constexpr (std::is_void_v<ReturnType>) {
+						// void 返回类型的处理
+						//func(args...);
+						std::invoke(func, args...);
+						prom->set_value();
+
+					}else{
+
+						//prom->set_value(func(args...));
+						prom->set_value(std::invoke(func, args...));
+					}
+					
+				}catch(...){
+					prom->set_exception(std::current_exception());
+				}
+			};
+
+			std::shared_ptr<Task> ptr = std::make_shared<Task>(std::move(task), ThreadPool::id_counter_++, priority, delay);
 			scheduler_.push(std::move(ptr));
 
 			return fut;
